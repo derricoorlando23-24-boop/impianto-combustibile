@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'Impianto Combustibile Aeronautico</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a0e1a;
+    --deep: #0d1425;
+    --panel: #111827;
+    --card: #151d2e;
+    --border: #1e2d45;
+    --accent: #e8521a;
+    --accent2: #1a8fe8;
+    --accent3: #18c99d;
+    --gold: #f5a623;
+    --text: #dde4f0;
+    --muted: #7a8aaa;
+    --formula: #a8d8ff;
+    --glow: rgba(232,82,26,0.18);
+    --glow2: rgba(26,143,232,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    overflow: hidden;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, #0d2040 0%, var(--navy) 70%);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(26,143,232,0.04) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(26,143,232,0.04) 40px);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 8vw, 6.5rem);
+    letter-spacing: 0.04em;
+    text-align: center;
+    line-height: 1.0;
+    background: linear-gradient(135deg, #ffffff 30%, var(--accent2) 70%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.4s forwards;
+  }
+
+  .hero-sub {
+    max-width: 680px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.05rem;
+    font-weight: 300;
+    margin-top: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.6s forwards;
+  }
+
+  /* Plane SVG */
+  .plane-hero {
+    margin: 2.5rem auto 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .scroll-hint {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.6s 1.2s forwards;
+  }
+
+  .scroll-hint .arrow {
+    width: 20px; height: 20px;
+    border-right: 2px solid var(--accent2);
+    border-bottom: 2px solid var(--accent2);
+    transform: rotate(45deg);
+    animation: bounce 1.4s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: rotate(45deg) translateY(0); }
+    50% { transform: rotate(45deg) translateY(6px); }
+  }
+
+  /* ---- SECTION GRID ---- */
+  .sections-label {
+    text-align: center;
+    padding: 4rem 1rem 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+    max-width: 1200px;
+    margin: 0 auto 5rem;
+    padding: 0 1.5rem;
+  }
+
+  /* ---- CARDS ---- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.6rem 1.4rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.28s cubic-bezier(.16,1,.3,1), box-shadow 0.28s, border-color 0.28s;
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  .card.visible {
+    animation: revealCard 0.6s cubic-bezier(.16,1,.3,1) forwards;
+  }
+
+  @keyframes revealCard {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-accent, var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover::before { transform: scaleX(1); }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 30px var(--card-glow, var(--glow));
+    border-color: rgba(255,255,255,0.08);
+  }
+
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    background: var(--card-icon-bg, rgba(232,82,26,0.12));
+    border: 1px solid var(--card-accent, var(--accent));
+  }
+
+  .card h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.35rem;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+
+  .card p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .card-arrow {
+    position: absolute;
+    bottom: 1.2rem; right: 1.4rem;
+    color: var(--card-accent, var(--accent));
+    font-size: 1rem;
+    transition: transform 0.25s;
+  }
+
+  .card:hover .card-arrow { transform: translate(3px, -3px); }
+
+  /* color variants */
+  .card.blue  { --card-accent: var(--accent2); --card-glow: var(--glow2); --card-icon-bg: rgba(26,143,232,0.12); }
+  .card.teal  { --card-accent: var(--accent3); --card-glow: rgba(24,201,157,0.15); --card-icon-bg: rgba(24,201,157,0.1); }
+  .card.gold  { --card-accent: var(--gold);   --card-glow: rgba(245,166,35,0.15);  --card-icon-bg: rgba(245,166,35,0.1); }
+
+  /* ---- MODAL ---- */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5,8,18,0.82);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    overflow-y: auto;
+  }
+
+  .overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    max-width: 860px;
+    width: 100%;
+    margin: auto;
+    padding: 2.5rem 2rem 3rem;
+    position: relative;
+    transform: translateY(24px) scale(0.98);
+    transition: transform 0.35s cubic-bezier(.16,1,.3,1);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+  }
+
+  .overlay.open .modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-close {
+    position: sticky;
+    top: 0;
+    float: right;
+    background: var(--border);
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 1.1rem;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+    z-index: 10;
+  }
+
+  .modal-close:hover { background: var(--accent); }
+
+  .modal-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  .modal h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    margin-bottom: 1.4rem;
+    background: linear-gradient(120deg, #fff 50%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .modal-body h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin: 1.8rem 0 0.6rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+
+  .modal-body h3::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .modal-body p { font-size: 0.93rem; color: #b0bed4; margin-bottom: 0.8rem; line-height: 1.7; }
+
+  .formula-box {
+    background: #080d1a;
+    border: 1px solid var(--accent2);
+    border-left: 3px solid var(--accent2);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.92rem;
+    color: var(--formula);
+    overflow-x: auto;
+    line-height: 1.8;
+  }
+
+  .formula-box .label {
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    display: block;
+  }
+
+  .example-box {
+    background: rgba(24,201,157,0.06);
+    border: 1px solid rgba(24,201,157,0.25);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+  }
+
+  .example-box .ex-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--accent3);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    display: block;
+  }
+
+  .example-box p { color: #aeddd4; font-size: 0.88rem; margin: 0; }
+
+  .badge-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.8rem 0; }
+
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid;
+    letter-spacing: 0.06em;
+  }
+
+  .badge.orange { border-color: var(--accent); color: var(--accent); background: rgba(232,82,26,0.08); }
+  .badge.blue   { border-color: var(--accent2); color: var(--accent2); background: rgba(26,143,232,0.08); }
+  .badge.teal   { border-color: var(--accent3); color: var(--accent3); background: rgba(24,201,157,0.08); }
+  .badge.gold   { border-color: var(--gold); color: var(--gold); background: rgba(245,166,35,0.08); }
+
+  /* ---- SVG DIAGRAMS ---- */
+  .diagram-wrap {
+    background: #080d1a;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin: 1.2rem 0;
+    overflow-x: auto;
+  }
+
+  .diagram-wrap svg { display: block; max-width: 100%; height: auto; }
+
+  /* comparison table */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 1rem 0;
+  }
+
+  .comp-table th {
+    background: var(--border);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.55rem 0.8rem;
+    text-align: left;
+  }
+
+  .comp-table td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid rgba(30,45,69,0.6);
+    color: #a8b8d0;
+    vertical-align: middle;
+  }
+
+  .comp-table tr:hover td { background: rgba(26,143,232,0.04); }
+
+  /* ---- FOOTER ---- */
+  footer {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em;
+  }
+
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 600px) {
+    .modal { padding: 1.5rem 1rem 2rem; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====== HERO ====== -->
+<header class="hero">
+  <p class="hero-tag">Ingegneria Aeronautica · Sistemi di Bordo</p>
+  <h1>L'Impianto Combustibile Aeronautico</h1>
+  <p class="hero-sub">Oltre lo stoccaggio: un sistema attivo fondamentale per l'integrità strutturale, l'equilibrio e l'efficienza termica del velivolo.</p>
+
+  <!-- Hero plane SVG -->
+  <div class="plane-hero">
+    <svg viewBox="0 0 640 240" width="620" height="230" xmlns="http://www.w3.org/2000/svg" aria-label="Schema sezione velivolo con serbatoi">
+      <defs>
+        <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#1a2540"/>
+          <stop offset="100%" stop-color="#0d1425"/>
+        </linearGradient>
+        <linearGradient id="fuelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#1a8fe8" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#0d5aa0" stop-opacity="0.9"/>
+        </linearGradient>
+        <linearGradient id="fuelGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#e8521a" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#9c320e" stop-opacity="0.85"/>
+        </linearGradient>
+        <filter id="glow1">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#1a8fe8"/>
+        </marker>
+        <marker id="arrO" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#e8521a"/>
+        </marker>
+      </defs>
+
+      <!-- Wings -->
+      <polygon points="100,110 40,145 40,155 240,130 240,115" fill="url(#bodyGrad)" stroke="#1e2d45" stroke-width="1"/>
+      <polygon points="540,110 600,145 600,155 400,130 400,115" fill="url(#bodyGrad)" stroke="#1e2d45" stroke-width="1"/>
+
+      <!-- Wing fuel left -->
+      <rect x="60" y="132" width="155" height="16" rx="3" fill="url(#fuelGrad)" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;1;0.8" dur="2.5s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Wing fuel right -->
+      <rect x="425" y="132" width="155" height="16" rx="3" fill="url(#fuelGrad)" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;1;0.8" dur="2.5s" begin="0.5s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Fuselage -->
+      <ellipse cx="320" cy="122" rx="200" ry="38" fill="url(#bodyGrad)" stroke="#1e2d45" stroke-width="1.5"/>
+
+      <!-- Center tank -->
+      <rect x="230" y="110" width="180" height="24" rx="6" fill="url(#fuelGrad2)" opacity="0.85">
+        <animate attributeName="opacity" values="0.85;1;0.85" dur="3s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Nose -->
+      <ellipse cx="140" cy="122" rx="12" ry="18" fill="#0d1425" stroke="#1e2d45" stroke-width="1"/>
+
+      <!-- Tail -->
+      <polygon points="490,100 540,70 540,80 520,95" fill="url(#bodyGrad)" stroke="#1e2d45" stroke-width="1"/>
+      <!-- Trim tank in tail -->
+      <rect x="492" y="79" width="34" height="11" rx="3" fill="url(#fuelGrad)" opacity="0.7">
+        <animate attributeName="opacity" values="0.7;0.95;0.7" dur="4s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Engines -->
+      <ellipse cx="190" cy="162" rx="22" ry="10" fill="#0d1a2a" stroke="#1e2d45" stroke-width="1.5"/>
+      <ellipse cx="450" cy="162" rx="22" ry="10" fill="#0d1a2a" stroke="#1e2d45" stroke-width="1.5"/>
+
+      <!-- Flow arrows left engine -->
+      <line x1="170" y1="140" x2="175" y2="157" stroke="#1a8fe8" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="3,2">
+        <animate attributeName="stroke-dashoffset" values="0;-10" dur="0.8s" repeatCount="indefinite"/>
+      </line>
+      <!-- Flow arrows right engine -->
+      <line x1="470" y1="140" x2="465" y2="157" stroke="#1a8fe8" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="3,2">
+        <animate attributeName="stroke-dashoffset" values="0;-10" dur="0.8s" repeatCount="indefinite"/>
+      </line>
+
+      <!-- Labels -->
+      <text x="132" y="150" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#7a8aaa">Serbatoio Alare SX</text>
+      <text x="430" y="150" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#7a8aaa">Serbatoio Alare DX</text>
+      <text x="272" y="126" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#ffcdb0">Center Tank</text>
+      <text x="488" y="75" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#7acdf0">Trim Tank</text>
+    </svg>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Esplora i sistemi</span>
+    <div class="arrow"></div>
+  </div>
+</header>
+
+<!-- ====== CARDS GRID ====== -->
+<p class="sections-label">// Seleziona un sistema per approfondire</p>
+
+<div class="grid" id="cardsGrid">
+
+  <!-- Card 1 -->
+  <div class="card" data-modal="m1" style="--card-delay:0ms">
+    <div class="card-icon">✈️</div>
+    <h2>Sgravio Strutturale Alare</h2>
+    <p>Wing Bending Relief — il combustibile nelle ali contrasta la portanza, riducendo il momento flettente alla radice.</p>
+    <span class="card-arrow">↗</span>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card blue" data-modal="m2" style="--card-delay:80ms">
+    <div class="card-icon">⚖️</div>
+    <h2>Gestione Attiva del Baricentro</h2>
+    <p>Il carburante viene trasferito tra serbatoi per mantenere il CG entro limiti aerodinamici ottimali, riducendo la resistenza.</p>
+    <span class="card-arrow">↗</span>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card teal" data-modal="m3" style="--card-delay:160ms">
+    <div class="card-icon">🌡️</div>
+    <h2>Il Carburante come Pozzo Termico</h2>
+    <p>Il cherosene raffredda olio motore e avionics tramite scambiatori FOHE, eliminando radiatori aerodinamicamente costosi.</p>
+    <span class="card-arrow">↗</span>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="card gold" data-modal="m4" style="--card-delay:240ms">
+    <div class="card-icon">📐</div>
+    <h2>Architettura dei Serbatoi</h2>
+    <p>Wet Wing integrali, Bladder autosigillanti, Center Tank e Trim Tank: logica strutturale e operativa dell'impianto.</p>
+    <span class="card-arrow">↗</span>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="card" data-modal="m5" style="--card-delay:320ms">
+    <div class="card-icon">💧</div>
+    <h2>Prevenzione della Cavitazione</h2>
+    <p>Le Boost Pumps mantengono la pressione sopra la soglia critica Pv per evitare bolle di vapore distruttive nelle giranti.</p>
+    <span class="card-arrow">↗</span>
+  </div>
+
+  <!-- Card 6 -->
+  <div class="card blue" data-modal="m6" style="--card-delay:400ms">
+    <div class="card-icon">📡</div>
+    <h2>Sistema FQIS — Misura della Massa</h2>
+    <p>Sonde capacitive basate sulla costante dielettrica misurano la massa (kg), non il volume, compensando la dilatazione termica.</p>
+    <span class="card-arrow">↗</span>
+  </div>
+
+  <!-- Card 7 -->
+  <div class="card teal" data-modal="m7" style="--card-delay:480ms">
+    <div class="card-icon">🔒</div>
+    <h2>Inertizzazione NGS</h2>
+    <p>L'azoto riduce l'ossigeno nell'ullage sotto il 12%, rendendo i vapori incombustibili ed eliminando il rischio di esplosione.</p>
+    <span class="card-arrow">↗</span>
+  </div>
+
+  <!-- Card 8 -->
+  <div class="card gold" data-modal="m8" style="--card-delay:560ms">
+    <div class="card-icon">⚗️</div>
+    <h2>Confronto Carburanti Aeronautici</h2>
+    <p>Jet A-1, JP-8 militare, Avgas 100LL: differenze fisico-chimiche, punti di congelamento, flash point e additivi chiave.</p>
+    <span class="card-arrow">↗</span>
+  </div>
+
+</div>
+
+<!-- ====== MODALS ====== -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- ====== FOOTER ====== -->
+<footer>
+  <p>// Rapporto Tecnico — Impianti Combustibile Aeronautici · Sistemi Avanzati di Bordo</p>
+  <p style="margin-top:0.4rem; color:#3a4a62;">Strutture e Costruzioni Aeronautiche · Analisi Sistemica</p>
+</footer>
+
+<!-- ====== MODAL DATA ====== -->
+<script>
+const MODALS = {
+
+m1: {
+  tag: "Funzioni Strutturali",
+  title: "Sgravio Strutturale Alare (Wing Bending Relief)",
+  color: "#e8521a",
+  body: `
+    <h3>Principio Fisico</h3>
+    <p>Durante il volo, le ali generano portanza distribuita lungo l'apertura alare. Questa forza verso l'alto produce un <strong>momento flettente</strong> che tende a piegare le ali verso l'alto, con il valore massimo alla radice alare (attacco fusoliera). Il serbatoio di carburante nelle ali introduce una forza peso distribuita in direzione opposta, riducendo il momento flettente risultante.</p>
+
+    <div class="formula-box">
+      <span class="label">Momento flettente alla radice (semplificato)</span>
+      M_root = ∫₀ᵇ/² [ L(y) − W_fuel(y) − W_struct(y) ] · y dy
+      <br><br>
+      dove:<br>
+      L(y)       = portanza locale alla posizione y<br>
+      W_fuel(y)  = peso carburante locale alla posizione y<br>
+      b/2        = semi-apertura alare
+    </div>
+
+    <p>Riducendo M_root si riduce lo stress sulla struttura, consentendo al progettista di alleggerire longheroni e centine. Un'ala più leggera significa payload utile maggiore o autonomia estesa.</p>
+
+    <h3>Schema Grafico</h3>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 560 180" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="liftG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1a8fe8"/>
+            <stop offset="100%" stop-color="#1a8fe8" stop-opacity="0.1"/>
+          </linearGradient>
+          <linearGradient id="wfuelG" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="#e8521a"/>
+            <stop offset="100%" stop-color="#e8521a" stop-opacity="0.1"/>
+          </linearGradient>
+        </defs>
+        <!-- Wing outline -->
+        <line x1="40" y1="100" x2="520" y2="100" stroke="#1e2d45" stroke-width="1.5"/>
+        <text x="280" y="115" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace" fill="#3a4a62">RADICE</text>
+        <text x="30" y="115" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace" fill="#3a4a62">b/2</text>
+
+        <!-- Lift arrows (blue upward) -->
+        <g fill="#1a8fe8" opacity="0.85">
+          <polygon points="90,98 86,80 94,80"/>
+          <polygon points="130,98 126,70 134,70"/>
+          <polygon points="175,98 171,60 179,60"/>
+          <polygon points="220,98 216,55 224,55"/>
+          <polygon points="265,98 261,52 269,52"/>
+          <polygon points="310,98 306,55 314,55"/>
+          <polygon points="355,98 351,60 359,60"/>
+          <polygon points="400,98 396,68 404,68"/>
+          <polygon points="445,98 441,80 449,80"/>
+          <polygon points="490,98 486,90 494,90"/>
+        </g>
+        <text x="290" y="48" font-size="9" font-family="JetBrains Mono,monospace" fill="#1a8fe8">↑ Portanza L(y)</text>
+
+        <!-- Fuel weight arrows (orange downward) -->
+        <g fill="#e8521a" opacity="0.75">
+          <polygon points="90,102 86,120 94,120"/>
+          <polygon points="150,102 146,128 154,128"/>
+          <polygon points="220,102 216,130 224,130"/>
+          <polygon points="290,102 286,130 294,130"/>
+          <polygon points="360,102 356,128 364,128"/>
+          <polygon points="430,102 426,120 434,120"/>
+          <polygon points="490,102 486,112 494,112"/>
+        </g>
+        <text x="285" y="145" font-size="9" font-family="JetBrains Mono,monospace" fill="#e8521a">↓ Peso carburante W_fuel(y)</text>
+
+        <!-- Root label -->
+        <line x1="40" y1="70" x2="40" y2="140" stroke="#e8521a" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="10" y="100" transform="rotate(-90,10,100)" font-size="9" font-family="JetBrains Mono,monospace" fill="#e8521a">RADICE</text>
+        <text x="15" y="60" font-size="8" font-family="JetBrains Mono,monospace" fill="#7a8aaa">ΔM max</text>
+      </svg>
+    </div>
+
+    <div class="example-box">
+      <span class="ex-tag">✦ Esempio pratico — A320</span>
+      <p>L'A320 con serbatoi alari pieni (circa 18 500 kg di Jet A-1) sperimenta un momento flettente alla radice ridotto di circa il 15–25% rispetto alla configurazione con ali vuote e carburante solo nel Center Tank. Questo ha permesso di dimensionare i longheroni alari in lega Al-Li con un risparmio di massa di circa 400 kg rispetto a soluzioni precedenti.</p>
+    </div>
+
+    <div class="badge-row">
+      <span class="badge orange">Struttura alare</span>
+      <span class="badge blue">Portanza</span>
+      <span class="badge teal">Risparmio massa</span>
+    </div>
+  `
+},
+
+m2: {
+  tag: "Dinamica di Volo",
+  title: "Gestione Attiva del Baricentro (CG Management)",
+  color: "#1a8fe8",
+  body: `
+    <h3>Il Centro di Gravità nel Volo</h3>
+    <p>Il carburante può rappresentare il <strong>30–40% del peso totale al decollo</strong> (MTOW) di un aereo di linea. Il suo consumo progressivo sposta il centro di gravità (CG) lungo l'asse longitudinale. Se il CG esce dalla <em>finestra di stabilità</em> (limite anteriore = stabilità statica minima; limite posteriore = margine di stabilità minimo), si compromette la manovrabilità o si richiede un'elevata forza sullo stabilizzatore per mantenere l'assetto.</p>
+
+    <div class="formula-box">
+      <span class="label">Posizione CG (espresso in % MAC)</span>
+      x_CG = Σ (mᵢ · xᵢ) / Σ mᵢ
+      <br><br>
+      dove:<br>
+      mᵢ = massa del componente i (passeggeri, cargo, carburante, struttura)<br>
+      xᵢ = posizione longitudinale del componente i<br>
+      MAC = Mean Aerodynamic Chord (corda aerodinamica media)
+    </div>
+
+    <h3>Il Trim Tank e la Riduzione del Trim Drag</h3>
+    <p>Nella crociera, spostare carburante verso il Trim Tank (coda) porta il CG al limite posteriore. Questo riduce la deportanza richiesta allo stabilizzatore orizzontale per equilibrare il velivolo, abbattendo il <em>trim drag</em> (resistenza di equilibratura).</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+        <!-- CG envelope sketch -->
+        <rect x="40" y="30" width="420" height="100" rx="6" fill="#080d1a" stroke="#1e2d45" stroke-width="1"/>
+        <!-- Forward limit -->
+        <line x1="100" y1="30" x2="100" y2="130" stroke="#e8521a" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="104" y="45" font-size="8" font-family="JetBrains Mono,monospace" fill="#e8521a">Limite ant.</text>
+        <!-- Aft limit -->
+        <line x1="400" y1="30" x2="400" y2="130" stroke="#e8521a" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="342" y="45" font-size="8" font-family="JetBrains Mono,monospace" fill="#e8521a">Limite post.</text>
+        <!-- Safe zone -->
+        <rect x="100" y="40" width="300" height="80" rx="4" fill="rgba(26,143,232,0.07)" stroke="rgba(26,143,232,0.2)" stroke-width="1"/>
+        <text x="250" y="85" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace" fill="#1a8fe8">Finestra CG ammessa</text>
+        <!-- CG path arrow -->
+        <path d="M 160,90 C 220,80 310,75 370,70" stroke="#18c99d" stroke-width="2" fill="none" marker-end="url(#arrG)"/>
+        <defs>
+          <marker id="arrG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#18c99d"/>
+          </marker>
+        </defs>
+        <text x="200" y="65" font-size="8" font-family="JetBrains Mono,monospace" fill="#18c99d">CG durante crociera →</text>
+        <!-- dots -->
+        <circle cx="160" cy="90" r="4" fill="#f5a623"/>
+        <text x="140" y="107" font-size="7.5" font-family="JetBrains Mono,monospace" fill="#f5a623">Decollo</text>
+        <circle cx="370" cy="70" r="4" fill="#18c99d"/>
+        <text x="352" y="87" font-size="7.5" font-family="JetBrains Mono,monospace" fill="#18c99d">Crociera</text>
+        <!-- axis -->
+        <text x="40" y="148" font-size="8" font-family="JetBrains Mono,monospace" fill="#3a4a62">← Anteriore</text>
+        <text x="380" y="148" font-size="8" font-family="JetBrains Mono,monospace" fill="#3a4a62">Posteriore →</text>
+      </svg>
+    </div>
+
+    <div class="example-box">
+      <span class="ex-tag">✦ Esempio pratico — A330 Long Range</span>
+      <p>Su tratte intercontinentali (es. CDG–NRT, ~12 h), il trasferimento attivo di carburante verso il Trim Tank posteriore permette un risparmio documentato del <strong>1–2% di carburante</strong>. Su un volo con consumo di 120 t di Jet A-1, il risparmio è di 1,2–2,4 t di carburante per volo, pari a un abbattimento di CO₂ di circa 3,8–7,5 t per tratta.</p>
+    </div>
+
+    <div class="badge-row">
+      <span class="badge blue">CG Management</span>
+      <span class="badge teal">Trim Drag</span>
+      <span class="badge orange">FMGC</span>
+      <span class="badge gold">Efficienza</span>
+    </div>
+  `
+},
+
+m3: {
+  tag: "Termodinamica Applicata",
+  title: "Il Carburante come Pozzo Termico (Heat Sink)",
+  color: "#18c99d",
+  body: `
+    <h3>Principio del FOHE (Fuel-Oil Heat Exchanger)</h3>
+    <p>I moderni turbofan generano enormi quantità di calore negli oli del motore, nelle pompe idrauliche e nei sistemi avionici di potenza. Il cherosene (Jet A-1), disponibile in grandi quantità e con una capacità termica specifica di circa <strong>2 kJ/(kg·K)</strong>, viene usato come fluido termovettore primario attraverso scambiatori di calore dedicati.</p>
+
+    <div class="formula-box">
+      <span class="label">Potenza termica scambiata (scambiatore FOHE)</span>
+      Q̇ = ṁ_fuel · Cₚ_fuel · ΔT_fuel = ṁ_oil · Cₚ_oil · ΔT_oil
+      <br><br>
+      dove:<br>
+      ṁ_fuel  = portata massica carburante [kg/s]<br>
+      Cₚ_fuel ≈ 2 000 J/(kg·K) (Jet A-1)<br>
+      ΔT_fuel = incremento di temperatura del carburante [K]
+    </div>
+
+    <h3>Limite di Coking — Vincolo Critico</h3>
+    <p>La temperatura massima del carburante è limitata dalla <strong>soglia di coking</strong>: oltre 120–135°C, il cherosene subisce pirolisi e ossidazione termica, depositando particolati carboniosi solidi (coke) negli iniettori, il che può causare mal funzionamento del motore o arresto.</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+        <!-- Heat flow diagram -->
+        <!-- Oil hot -->
+        <rect x="20" y="30" width="110" height="50" rx="6" fill="rgba(232,82,26,0.15)" stroke="#e8521a" stroke-width="1.2"/>
+        <text x="75" y="52" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace" fill="#e8521a">OLIO MOTORE</text>
+        <text x="75" y="66" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono,monospace" fill="#e8521a">T_in ~130°C</text>
+
+        <!-- FOHE -->
+        <rect x="185" y="20" width="130" height="70" rx="8" fill="rgba(26,143,232,0.1)" stroke="#1a8fe8" stroke-width="1.5"/>
+        <text x="250" y="45" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace" fill="#1a8fe8">FOHE</text>
+        <text x="250" y="60" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#7a8aaa">Fuel-Oil Heat</text>
+        <text x="250" y="73" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#7a8aaa">Exchanger</text>
+
+        <!-- Cooled oil -->
+        <rect x="370" y="30" width="110" height="50" rx="6" fill="rgba(24,201,157,0.1)" stroke="#18c99d" stroke-width="1.2"/>
+        <text x="425" y="52" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace" fill="#18c99d">OLIO RAFFREDD.</text>
+        <text x="425" y="66" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono,monospace" fill="#18c99d">T_out ~90°C</text>
+
+        <!-- Arrows oil -->
+        <line x1="130" y1="55" x2="185" y2="55" stroke="#e8521a" stroke-width="2" marker-end="url(#arrO2)"/>
+        <defs>
+          <marker id="arrO2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#e8521a"/>
+          </marker>
+          <marker id="arrB2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#18c99d"/>
+          </marker>
+        </defs>
+        <line x1="315" y1="55" x2="370" y2="55" stroke="#18c99d" stroke-width="2" marker-end="url(#arrB2)"/>
+
+        <!-- Fuel cold in -->
+        <text x="185" y="110" font-size="8" font-family="JetBrains Mono,monospace" fill="#1a8fe8">↑ Jet A-1 freddo (~-20°C alta quota)</text>
+        <line x1="235" y1="104" x2="235" y2="90" stroke="#1a8fe8" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrBI)"/>
+        <defs>
+          <marker id="arrBI" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#1a8fe8"/>
+          </marker>
+          <marker id="arrBU" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+            <polygon points="8 0, 0 3, 8 6" fill="#f5a623"/>
+          </marker>
+        </defs>
+
+        <!-- Fuel warm out -->
+        <line x1="265" y1="90" x2="265" y2="115" stroke="#f5a623" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrBU)"/>
+        <text x="245" y="130" font-size="8" font-family="JetBrains Mono,monospace" fill="#f5a623">↓ Jet A-1 preriscaldato → iniettori</text>
+
+        <!-- Coking limit -->
+        <line x1="20" y1="145" x2="480" y2="145" stroke="#e8521a" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="250" y="158" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#e8521a">⚠ Limite coking: 120–135°C — non superare</text>
+      </svg>
+    </div>
+
+    <div class="example-box">
+      <span class="ex-tag">✦ Esempio pratico — CFM56</span>
+      <p>Nel CFM56-7B (Boeing 737NG), il FOHE trasferisce circa <strong>80–100 kW</strong> dall'olio motore al carburante. Il carburante entra nello scambiatore a circa –15°C (quota crociera, alta quota) e ne esce a circa 40–55°C, migliorando l'atomizzazione agli iniettori e aumentando l'efficienza di combustione del ciclo Brayton di circa 0,5–1%.</p>
+    </div>
+
+    <div class="badge-row">
+      <span class="badge teal">FOHE</span>
+      <span class="badge orange">Coking</span>
+      <span class="badge blue">Termodinamica</span>
+      <span class="badge gold">Efficienza termica</span>
+    </div>
+  `
+},
+
+m4: {
+  tag: "Architettura Sistemica",
+  title: "Architettura dei Serbatoi e delle Pompe",
+  color: "#f5a623",
+  body: `
+    <h3>Tipologie di Serbatoi</h3>
+    <p><strong>Wet Wing (Integrali):</strong> Le cavità della struttura alare (delimitate da longheroni e centine) vengono sigillate con mastici polisolfurici. Massimizzano il volume utile e minimizzano i pesi morti. Sono la soluzione standard per tutti gli aerei di linea.</p>
+    <p><strong>Bladder Tank (Sacche Flessibili):</strong> Sacche in gomma sintetica vulcanizzata inserite in compartimenti. Tipiche di elicotteri e velivoli militari per la resistenza agli impatti e la capacità autosigillante in caso di foratura da proiettile.</p>
+    <p><strong>Center Tank:</strong> Situato nella fusoliera tra le radici alari. Svuotato sempre per primo dalla logica di gestione carburante per sfruttare lo sgravio alare delle ali piene il più a lungo possibile.</p>
+    <p><strong>Trim Tank:</strong> Nello stabilizzatore orizzontale. Utilizzato per spostare attivamente il CG verso il limite posteriore in crociera.</p>
+
+    <h3>Sistema di Pompaggio</h3>
+    <p><strong>Boost Pumps:</strong> Pompe centrifughe a motore brushless sommerse nel carburante (che funge da refrigerante e da isolante contro scintille). Elevano la pressione a circa 20–40 PSI sopra la soglia di vapore.</p>
+    <p><strong>Ejector Pumps (Venturi):</strong> Senza parti mobili: usano la portata ad alta pressione della linea principale per aspirare per effetto Venturi il carburante dai punti bassi del serbatoio nel pozzetto (Collector Cell). Affidabilità totale anche con guasto elettrico.</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrY" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#f5a623"/>
+          </marker>
+          <marker id="arrW" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#ffffff"/>
+          </marker>
+        </defs>
+        <!-- Wing tank left -->
+        <rect x="10" y="40" width="140" height="60" rx="6" fill="rgba(26,143,232,0.1)" stroke="#1a8fe8" stroke-width="1"/>
+        <text x="80" y="63" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace" fill="#1a8fe8">SERBATOIO ALA SX</text>
+        <!-- Collector cell left -->
+        <rect x="120" y="55" width="30" height="30" rx="4" fill="rgba(245,166,35,0.15)" stroke="#f5a623" stroke-width="1"/>
+        <text x="135" y="73" text-anchor="middle" font-size="7" font-family="JetBrains Mono,monospace" fill="#f5a623">Cell</text>
+        <!-- Boost pump left -->
+        <circle cx="135" cy="130" r="16" fill="rgba(232,82,26,0.12)" stroke="#e8521a" stroke-width="1.2"/>
+        <text x="135" y="126" text-anchor="middle" font-size="7" font-family="JetBrains Mono,monospace" fill="#e8521a">BOOST</text>
+        <text x="135" y="137" text-anchor="middle" font-size="7" font-family="JetBrains Mono,monospace" fill="#e8521a">PUMP</text>
+        <!-- Arrow down to pump -->
+        <line x1="135" y1="85" x2="135" y2="114" stroke="#f5a623" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrY)"/>
+        <!-- Arrow to engine left -->
+        <line x1="135" y1="146" x2="135" y2="175" stroke="#e8521a" stroke-width="1.5" marker-end="url(#arrW)"/>
+        <rect x="100" y="175" width="70" height="20" rx="4" fill="rgba(24,201,157,0.1)" stroke="#18c99d" stroke-width="1"/>
+        <text x="135" y="189" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#18c99d">MOTORE SX</text>
+
+        <!-- Center tank -->
+        <rect x="185" y="30" width="150" height="70" rx="6" fill="rgba(232,82,26,0.1)" stroke="#e8521a" stroke-width="1"/>
+        <text x="260" y="60" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace" fill="#e8521a">CENTER TANK</text>
+        <text x="260" y="75" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#7a8aaa">(svuotato per primo)</text>
+        <!-- Cross-feed valve -->
+        <rect x="215" y="140" width="90" height="22" rx="4" fill="rgba(245,166,35,0.1)" stroke="#f5a623" stroke-width="1"/>
+        <text x="260" y="155" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#f5a623">CROSS-FEED VALVE</text>
+        <!-- Arrow center to crossfeed -->
+        <line x1="260" y1="100" x2="260" y2="140" stroke="#e8521a" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrW)"/>
+
+        <!-- Wing tank right -->
+        <rect x="370" y="40" width="140" height="60" rx="6" fill="rgba(26,143,232,0.1)" stroke="#1a8fe8" stroke-width="1"/>
+        <text x="440" y="63" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace" fill="#1a8fe8">SERBATOIO ALA DX</text>
+        <!-- Collector cell right -->
+        <rect x="370" y="55" width="30" height="30" rx="4" fill="rgba(245,166,35,0.15)" stroke="#f5a623" stroke-width="1"/>
+        <text x="385" y="73" text-anchor="middle" font-size="7" font-family="JetBrains Mono,monospace" fill="#f5a623">Cell</text>
+        <!-- Boost pump right -->
+        <circle cx="385" cy="130" r="16" fill="rgba(232,82,26,0.12)" stroke="#e8521a" stroke-width="1.2"/>
+        <text x="385" y="126" text-anchor="middle" font-size="7" font-family="JetBrains Mono,monospace" fill="#e8521a">BOOST</text>
+        <text x="385" y="137" text-anchor="middle" font-size="7" font-family="JetBrains Mono,monospace" fill="#e8521a">PUMP</text>
+        <line x1="385" y1="85" x2="385" y2="114" stroke="#f5a623" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrY)"/>
+        <line x1="385" y1="146" x2="385" y2="175" stroke="#e8521a" stroke-width="1.5" marker-end="url(#arrW)"/>
+        <rect x="350" y="175" width="70" height="20" rx="4" fill="rgba(24,201,157,0.1)" stroke="#18c99d" stroke-width="1"/>
+        <text x="385" y="189" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#18c99d">MOTORE DX</text>
+
+        <!-- Cross-feed horizontal line -->
+        <line x1="135" y1="151" x2="215" y2="151" stroke="#f5a623" stroke-width="1" stroke-dasharray="3,2"/>
+        <line x1="305" y1="151" x2="385" y2="151" stroke="#f5a623" stroke-width="1" stroke-dasharray="3,2"/>
+      </svg>
+    </div>
+
+    <div class="example-box">
+      <span class="ex-tag">✦ Esempio pratico — Suction Feed di emergenza</span>
+      <p>In caso di avaria elettrica totale, la pompa meccanica mossa dall'albero accessori del motore aspira carburante bypassando le boost pump (tramite valvola a molla). Questa modalità "Suction Feed" è limitata a quote medio-basse (tipicamente sotto 25 000 ft) per mantenere la pressione sopra la soglia di cavitazione del cherosene.</p>
+    </div>
+
+    <div class="badge-row">
+      <span class="badge gold">Wet Wing</span>
+      <span class="badge blue">Bladder</span>
+      <span class="badge orange">Cross-feed</span>
+      <span class="badge teal">Ridondanza</span>
+    </div>
+  `
+},
+
+m5: {
+  tag: "Fluidodinamica Applicata",
+  title: "Prevenzione della Cavitazione",
+  color: "#e8521a",
+  body: `
+    <h3>Il Fenomeno della Cavitazione</h3>
+    <p>Salendo di quota, la pressione atmosferica decresce seguendo la legge barometrica. Se la pressione statica del carburante nel condotto scende <strong>sotto la pressione di vapore saturo (Pv)</strong> del liquido alla temperatura locale, il cherosene inizia a vaporizzare localmente, formando bolle. Il loro collasso implosivo (cavitazione) produce onde d'urto microscopiche che erodono le giranti delle pompe e causano pericolosa irregolarità del flusso ai motori.</p>
+
+    <div class="formula-box">
+      <span class="label">Equazione di Bernoulli per fluidi reali (condotto di aspirazione)</span>
+      P_in + ½ρv_in² = P_out + ½ρv_out² + ΔP_perdite − ΔP_pompa
+      <br><br>
+      Condizione di sicurezza:<br>
+      P_locale > Pv(T)   in ogni punto del circuito
+      <br><br>
+      Pv(Jet A-1 a 40°C) ≈ 0.6–1.5 kPa assoluta
+    </div>
+
+    <h3>Perdite di Carico nei Condotti</h3>
+    <div class="formula-box">
+      <span class="label">Perdita di pressione totale (Darcy-Weisbach)</span>
+      ΔP_tot = Σ ( f · L/D · ρv²/2 ) + Σ ( K · ρv²/2 )
+      <br><br>
+      f = fattore attrito Darcy (funzione di Re e rugosità ε/D)<br>
+      L = lunghezza condotto [m]  |  D = diametro [m]<br>
+      K = coefficiente perdita localizzata (curva, valvola, ecc.)<br>
+      v ≤ 2–3 m/s  (limite triboelettrico — vedi sicurezza)
+    </div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 520 170" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="presGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#1a8fe8"/>
+            <stop offset="60%" stop-color="#f5a623"/>
+            <stop offset="100%" stop-color="#e8521a"/>
+          </linearGradient>
+          <marker id="arrP" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#1a8fe8"/>
+          </marker>
+        </defs>
+        <!-- Pipe -->
+        <rect x="20" y="70" width="480" height="30" rx="4" fill="#080d1a" stroke="#1e2d45" stroke-width="1"/>
+        <!-- Pressure gradient fill -->
+        <rect x="20" y="70" width="480" height="30" rx="4" fill="url(#presGrad)" opacity="0.25"/>
+        <!-- Boost pump symbol -->
+        <circle cx="90" cy="85" r="22" fill="rgba(26,143,232,0.12)" stroke="#1a8fe8" stroke-width="1.5"/>
+        <text x="90" y="82" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#1a8fe8">BOOST</text>
+        <text x="90" y="93" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#1a8fe8">PUMP</text>
+
+        <!-- Pv threshold line -->
+        <line x1="20" y1="58" x2="500" y2="58" stroke="#e8521a" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="25" y="53" font-size="8" font-family="JetBrains Mono,monospace" fill="#e8521a">Soglia Pv critica</text>
+
+        <!-- Pressure curve -->
+        <polyline points="20,40 90,30 200,48 350,56 440,62 500,65" stroke="#18c99d" stroke-width="2" fill="none"/>
+        <text x="260" y="35" font-size="8" font-family="JetBrains Mono,monospace" fill="#18c99d">P_locale(x) → sempre sopra Pv</text>
+
+        <!-- Cavitation danger zone without pump (ghost curve) -->
+        <polyline points="20,40 90,70 200,80 350,86" stroke="#e8521a" stroke-width="1.5" fill="none" stroke-dasharray="5,3" opacity="0.5"/>
+        <text x="200" y="110" font-size="8" font-family="JetBrains Mono,monospace" fill="#e8521a" opacity="0.7">↑ senza pompa: cavitazione</text>
+
+        <!-- Flow arrow -->
+        <line x1="430" y1="85" x2="490" y2="85" stroke="#1a8fe8" stroke-width="1.5" marker-end="url(#arrP)"/>
+        <text x="495" y="89" font-size="9" font-family="JetBrains Mono,monospace" fill="#7a8aaa">→HP</text>
+
+        <!-- Altitude label -->
+        <text x="250" y="155" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace" fill="#7a8aaa">Direzione flusso: serbatoio → motore</text>
+      </svg>
+    </div>
+
+    <div class="example-box">
+      <span class="ex-tag">✦ Esempio pratico — Quote Elevate</span>
+      <p>A 40 000 ft (12 200 m), la pressione atmosferica scende a circa 18,8 kPa. Senza le boost pump, la pressione nel condotto di aspirazione potrebbe scendere vicino alla Pv del Jet A-1, causando flashing. Le boost pump elevano la pressione a 30–50 kPa mantenendo un ampio margine di sicurezza. La modalità "Suction Feed" di emergenza è perciò limitata a quote inferiori a ~25 000 ft.</p>
+    </div>
+
+    <div class="badge-row">
+      <span class="badge orange">Bernoulli</span>
+      <span class="badge blue">Darcy-Weisbach</span>
+      <span class="badge teal">Boost Pump</span>
+    </div>
+  `
+},
+
+m6: {
+  tag: "Elettronica & Misura",
+  title: "Sistema FQIS — Misura della Massa tramite Dielettrico",
+  color: "#1a8fe8",
+  body: `
+    <h3>Perché la Massa, non il Volume</h3>
+    <p>Il volume del carburante varia con la temperatura a causa della dilatazione termica. L'energia chimica utile alla combustione dipende strettamente dalla <strong>massa molecolare</strong>, non dal volume. Un litro di Jet A-1 a –40°C ha una densità maggiore di circa il 4–5% rispetto a +40°C, quindi misurare in litri comporterebbe un errore energetico significativo.</p>
+
+    <div class="formula-box">
+      <span class="label">Dilatazione volumetrica termica</span>
+      V(T) = V₀ · (1 + β·ΔT)
+      <br><br>
+      β (Jet A-1) ≈ 9.8 × 10⁻⁴ K⁻¹<br>
+      ΔT = variazione termica dal riferimento [K]
+    </div>
+
+    <h3>Principio Capacitivo del FQIS</h3>
+    <p>Il FQIS usa sonde capacitive cilindriche coassiali immerse nel carburante. La capacità di un condensatore coassiale dipende dalla costante dielettrica del mezzo interposto. L'aria ha εᵣ ≈ 1, il Jet A-1 ha εᵣ ≈ 2.1. Man mano che il livello del carburante sale, la capacità del condensatore cresce in modo lineare.</p>
+
+    <div class="formula-box">
+      <span class="label">Capacità del condensatore coassiale (sonda FQIS)</span>
+      C = 2π·ε₀·εᵣ·L / ln(R₂/R₁)
+      <br><br>
+      ε₀ = 8.854 × 10⁻¹² F/m (permittività del vuoto)<br>
+      εᵣ = costante dielettrica relativa (aria: 1 | Jet A-1: ~2.1)<br>
+      L  = lunghezza immersa nella sonda [m]<br>
+      R₂/R₁ = rapporto raggi cilindro esterno/interno
+    </div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg">
+        <!-- Tank outline -->
+        <rect x="30" y="20" width="200" height="140" rx="8" fill="#080d1a" stroke="#1e2d45" stroke-width="1.5"/>
+        <!-- Fuel level -->
+        <rect x="31" y="95" width="198" height="64" rx="0" fill="rgba(26,143,232,0.18)" stroke="none"/>
+        <line x1="31" y1="95" x2="229" y2="95" stroke="#1a8fe8" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="130" y="90" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#1a8fe8">livello carburante</text>
+
+        <!-- Coaxial probe -->
+        <rect x="100" y="25" width="16" height="130" rx="8" fill="none" stroke="#f5a623" stroke-width="1.2"/>
+        <rect x="104" y="29" width="8" height="122" rx="4" fill="none" stroke="#f5a623" stroke-width="0.8" stroke-dasharray="3,2"/>
+        <text x="108" y="18" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#f5a623">Sonda cap.</text>
+
+        <!-- εr labels -->
+        <text x="165" y="60" font-size="9" font-family="JetBrains Mono,monospace" fill="#7a8aaa">εᵣ(aria) ≈ 1</text>
+        <text x="165" y="130" font-size="9" font-family="JetBrains Mono,monospace" fill="#1a8fe8">εᵣ(JetA-1) ≈ 2.1</text>
+
+        <!-- Arrows to computer -->
+        <line x1="230" y1="90" x2="290" y2="90" stroke="#18c99d" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrG2)"/>
+        <defs>
+          <marker id="arrG2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#18c99d"/>
+          </marker>
+        </defs>
+        <text x="285" y="83" font-size="8" font-family="JetBrains Mono,monospace" fill="#18c99d">C(t)</text>
+
+        <!-- Computer box -->
+        <rect x="290" y="60" width="180" height="70" rx="6" fill="rgba(24,201,157,0.07)" stroke="#18c99d" stroke-width="1"/>
+        <text x="380" y="85" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono,monospace" fill="#18c99d">FQIS COMPUTER</text>
+        <text x="380" y="100" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#7a8aaa">C → εᵣ → ρ → massa [kg]</text>
+        <text x="380" y="120" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#f5a623">Output: kg ± 0.5%</text>
+      </svg>
+    </div>
+
+    <div class="example-box">
+      <span class="ex-tag">✦ Esempio pratico — TWA 800 & FQIS</span>
+      <p>Il disastro del TWA 800 (1996) fu causato dall'accensione dei vapori nel Center Tank. Le moderne normative (FAA SFAR 88) richiedono ora che il FQIS utilizzi circuiti a bassa energia (max 50 mJ) per prevenire qualsiasi possibile innesco elettrico nelle sonde, combinato con il sistema NGS di inertizzazione ad azoto.</p>
+    </div>
+
+    <div class="badge-row">
+      <span class="badge blue">Capacità dielettrica</span>
+      <span class="badge gold">Massa [kg]</span>
+      <span class="badge teal">FQIS</span>
+      <span class="badge orange">FAA SFAR 88</span>
+    </div>
+  `
+},
+
+m7: {
+  tag: "Sicurezza Critica",
+  title: "Inertizzazione NGS — Sistema ad Azoto",
+  color: "#18c99d",
+  body: `
+    <h3>Il Rischio dell'Ullage</h3>
+    <p>Nello spazio vuoto sopra il livello del carburante (<em>ullage</em>) si accumula una miscela di vapori di idrocarburi e aria. Se la concentrazione di ossigeno supera il <strong>12%</strong> e la concentrazione di vapori è nel range infiammabile, la miscela è esplosiva. L'NGS neutralizza questo rischio riducendo l'ossigeno sotto la soglia di combustibilità.</p>
+
+    <div class="formula-box">
+      <span class="label">Limite di inertizzazione (LOC — Limiting Oxygen Concentration)</span>
+      [O₂] &lt; 12%  →  miscela incombustibile in ogni condizione
+      <br><br>
+      Range infiammabile Jet A-1 in aria:<br>
+      LEL ≈ 0.6% vol. | UEL ≈ 4.7% vol.<br>
+      (a temperatura ambientale — espande con T)
+    </div>
+
+    <h3>Funzionamento dell'NGS (Nitrogen Generation System)</h3>
+    <p>L'NGS preleva aria compressa dal compressore del motore (<em>bleed air</em>), la raffredda e la fa passare attraverso <strong>membrane a fibre cave</strong>. L'ossigeno (molecola più piccola) permea le fibre e viene scaricato all'esterno, mentre l'azoto ad alta concentrazione (NEA — Nitrogen Enriched Air) viene immesso nel serbatoio.</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrN" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#18c99d"/>
+          </marker>
+          <marker id="arrO3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#e8521a"/>
+          </marker>
+        </defs>
+        <!-- Engine bleed -->
+        <rect x="10" y="65" width="80" height="50" rx="6" fill="rgba(232,82,26,0.1)" stroke="#e8521a" stroke-width="1"/>
+        <text x="50" y="87" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#e8521a">BLEED AIR</text>
+        <text x="50" y="100" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#7a8aaa">Compressore</text>
+
+        <line x1="90" y1="90" x2="130" y2="90" stroke="#e8521a" stroke-width="1.5" marker-end="url(#arrO3)"/>
+
+        <!-- Membrane separator -->
+        <rect x="130" y="55" width="120" height="70" rx="6" fill="rgba(26,143,232,0.08)" stroke="#1a8fe8" stroke-width="1.2"/>
+        <text x="190" y="80" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono,monospace" fill="#1a8fe8">MEMBRANA</text>
+        <text x="190" y="93" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#7a8aaa">Fibra cava</text>
+        <text x="190" y="106" text-anchor="middle" font-size="7.5" font-family="JetBrains Mono,monospace" fill="#7a8aaa">separazione O₂/N₂</text>
+        <!-- O2 out arrow -->
+        <line x1="190" y1="55" x2="190" y2="25" stroke="#e8521a" stroke-width="1.5" marker-end="url(#arrO3)"/>
+        <text x="198" y="20" font-size="8" font-family="JetBrains Mono,monospace" fill="#e8521a">O₂ scaricato</text>
+
+        <!-- NEA to tank -->
+        <line x1="250" y1="90" x2="310" y2="90" stroke="#18c99d" stroke-width="1.5" marker-end="url(#arrN)"/>
+        <text x="280" y="82" font-size="8" font-family="JetBrains Mono,monospace" fill="#18c99d">NEA (N₂)</text>
+
+        <!-- Tank ullage -->
+        <rect x="310" y="20" width="180" height="140" rx="8" fill="#080d1a" stroke="#1e2d45" stroke-width="1.5"/>
+        <!-- Fuel in tank -->
+        <rect x="311" y="100" width="178" height="59" rx="0" fill="rgba(26,143,232,0.18)"/>
+        <line x1="311" y1="100" x2="489" y2="100" stroke="#1a8fe8" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="400" y="130" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#1a8fe8">Jet A-1</text>
+        <!-- Ullage N2 -->
+        <text x="400" y="55" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono,monospace" fill="#18c99d">ULLAGE</text>
+        <text x="400" y="70" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#18c99d">[O₂] &lt; 12%</text>
+        <text x="400" y="84" text-anchor="middle" font-size="7.5" font-family="JetBrains Mono,monospace" fill="#7a8aaa">→ incombustibile ✓</text>
+      </svg>
+    </div>
+
+    <h3>Sicurezza Elettrostatica e Bonding</h3>
+    <p>Durante il rifornimento ad alta pressione, l'attrito del liquido genera cariche elettrostatiche. Per prevenire scintille: tutti i componenti metallici sono collegati a massa comune (bonding), e si aggiunge al carburante il dissipatore statico <strong>Stadis 450</strong> che aumenta la conducibilità del cherosene da ~1 pS/m fino a 150–600 pS/m, permettendo alle cariche di dissiparsi prima di accumularsi.</p>
+
+    <div class="example-box">
+      <span class="ex-tag">✦ Esempio pratico — Boeing 787</span>
+      <p>Il B787 è il primo aereo di linea con NGS integrato di serie su tutti i serbatoi principali. Il sistema elabora circa 40–70 kg/h di bleed air separando N₂ per mantenere O₂ &lt; 12% nell'ullage, anche durante la discesa rapida quando la pressione interna si abbassa e la vaporizzazione del carburante aumenta significativamente.</p>
+    </div>
+
+    <div class="badge-row">
+      <span class="badge teal">NGS</span>
+      <span class="badge blue">Ullage</span>
+      <span class="badge orange">Stadis 450</span>
+      <span class="badge gold">Bonding</span>
+    </div>
+  `
+},
+
+m8: {
+  tag: "Chimica dei Propellenti",
+  title: "Confronto Carburanti Aeronautici",
+  color: "#f5a623",
+  body: `
+    <h3>Le tre Famiglie Principali</h3>
+    <p>I carburanti aeronautici commerciali e militari differiscono fondamentalmente per composizione, temperatura di congelamento, flash point e additivi chimici. La scelta influenza le prestazioni del motore, la sicurezza a terra e in volo, e la compatibilità con i sistemi di bordo.</p>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Proprietà</th>
+          <th>Jet A-1 (Standard)</th>
+          <th>JP-8 (Militare)</th>
+          <th>Avgas 100LL (AG)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Composizione</td><td>Kerosene C₉–C₁₆</td><td>Kerosene C₉–C₁₆ + Mil. Additivi</td><td>Benzina C₄–C₁₀</td></tr>
+        <tr><td>Punto Congelamento</td><td style="color:#1a8fe8">≤ −47°C</td><td style="color:#1a8fe8">≤ −47°C</td><td style="color:#18c99d">≤ −58°C</td></tr>
+        <tr><td>Flash Point</td><td style="color:#18c99d">> 38°C</td><td style="color:#18c99d">> 38°C</td><td style="color:#e8521a">&lt; −40°C ⚠</td></tr>
+        <tr><td>Additivo Principale</td><td>Dissipatore statico</td><td>FSII + Anti-corrosione</td><td>Piombo Tetraetile (TEL)</td></tr>
+        <tr><td>Densità a 15°C</td><td>~0.800 kg/L</td><td>~0.800 kg/L</td><td>~0.720 kg/L</td></tr>
+        <tr><td>Applicazione</td><td>Aviazione civile mondiale</td><td>NATO / Aviazione militare</td><td>Aeromobili a pistone (GA)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Analisi del Flash Point — Sicurezza Fondamentale</h3>
+    <p>Il flash point di Avgas è &lt; −40°C, il che significa che a temperatura ambiente si formano già vapori infiammabili sopra la superficie del liquido. Il Jet A-1, con flash point > 38°C, è molto più sicuro a terra: non si incendia accidentalmente in condizioni normali, richiedendo fiamme dirette o elevate temperature per innescarsi.</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 480 150" xmlns="http://www.w3.org/2000/svg">
+        <!-- Temperature axis -->
+        <line x1="30" y1="120" x2="460" y2="120" stroke="#1e2d45" stroke-width="1.5"/>
+        <!-- Ticks -->
+        <line x1="80" y1="115" x2="80" y2="125" stroke="#3a4a62" stroke-width="1"/>
+        <text x="80" y="138" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#3a4a62">−60°C</text>
+        <line x1="160" y1="115" x2="160" y2="125" stroke="#3a4a62" stroke-width="1"/>
+        <text x="160" y="138" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#3a4a62">−40°C</text>
+        <line x1="240" y1="115" x2="240" y2="125" stroke="#3a4a62" stroke-width="1"/>
+        <text x="240" y="138" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#3a4a62">−20°C</text>
+        <line x1="320" y1="115" x2="320" y2="125" stroke="#3a4a62" stroke-width="1"/>
+        <text x="320" y="138" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#3a4a62">0°C</text>
+        <line x1="400" y1="115" x2="400" y2="125" stroke="#3a4a62" stroke-width="1"/>
+        <text x="400" y="138" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#3a4a62">+38°C</text>
+
+        <!-- Congelamento markers -->
+        <!-- Avgas freeze -58 -->
+        <line x1="72" y1="20" x2="72" y2="120" stroke="#18c99d" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="76" y="18" font-size="7.5" font-family="JetBrains Mono,monospace" fill="#18c99d">▲ Congel. Avgas −58°C</text>
+        <!-- JetA1/JP8 freeze -47 -->
+        <line x1="104" y1="30" x2="104" y2="120" stroke="#1a8fe8" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="108" y="29" font-size="7.5" font-family="JetBrains Mono,monospace" fill="#1a8fe8">▲ Congel. Jet A-1/JP-8 −47°C</text>
+        <!-- Avgas flash -40 -->
+        <line x1="160" y1="50" x2="160" y2="120" stroke="#e8521a" stroke-width="1.5"/>
+        <text x="118" y="60" font-size="7.5" font-family="JetBrains Mono,monospace" fill="#e8521a">⚠ Flash Avgas &lt;−40°C</text>
+        <!-- JetA1 flash +38 -->
+        <line x1="400" y1="50" x2="400" y2="120" stroke="#18c99d" stroke-width="1.5"/>
+        <text x="330" y="48" font-size="7.5" font-family="JetBrains Mono,monospace" fill="#18c99d">✓ Flash Jet A-1 &gt;38°C</text>
+        <!-- Safe zone Jet A-1 -->
+        <rect x="160" y="80" width="240" height="25" rx="3" fill="rgba(24,201,157,0.08)" stroke="rgba(24,201,157,0.2)" stroke-width="1"/>
+        <text x="280" y="97" text-anchor="middle" font-size="8" font-family="JetBrains Mono,monospace" fill="#18c99d">Jet A-1: sicuro a temperatura ambiente</text>
+      </svg>
+    </div>
+
+    <h3>Il Futuro: Idrogeno Criogenico (LH₂)</h3>
+    <p>La transizione verso l'idrogeno liquido impone una riscrittura totale dell'impianto: temperatura di stoccaggio −253°C (serbatoi a doppia parete isolati sotto vuoto), volume 4× maggiore per parità di energia (impossibile nelle ali → serbatoi cilindrici in fusoliera), e necessità di evaporatori attivi per transitare LH₂ → GH₂ prima dell'iniezione.</p>
+
+    <div class="badge-row">
+      <span class="badge gold">Jet A-1</span>
+      <span class="badge blue">JP-8</span>
+      <span class="badge orange">Avgas 100LL</span>
+      <span class="badge teal">LH₂ (futuro)</span>
+    </div>
+  `
+}
+
+};
+
+// ---- Open modal ----
+function openModal(id) {
+  const data = MODALS[id];
+  if (!data) return;
+  const mc = document.getElementById('modalContent');
+  mc.innerHTML = `
+    <button class="modal-close" onclick="closeModal()" aria-label="Chiudi">✕</button>
+    <div class="modal-tag">${data.tag}</div>
+    <h1>${data.title}</h1>
+    <div class="modal-body">${data.body}</div>
+  `;
+  mc.style.borderTop = `3px solid ${data.color}`;
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Click on overlay background to close
+document.getElementById('overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Keyboard close
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Card click
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('click', () => openModal(card.dataset.modal));
+  card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openModal(card.dataset.modal); });
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('role', 'button');
+});
+
+// ---- Scroll reveal ----
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      const delay = parseInt(entry.target.style.getPropertyValue('--card-delay') || '0');
+      setTimeout(() => entry.target.classList.add('visible'), delay);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.card').forEach(c => observer.observe(c));
+</script>
+</body>
+</html>
